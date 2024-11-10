@@ -7,6 +7,7 @@ math_file = 'result_dirs/math-l5.summary.json'
 mmlu_file = 'result_dirs/mmlu-redux.summary.json'
 zebra_file = 'result_dirs/zebra-grid.summary.json'
 crux_file = 'result_dirs/crux.summary.json'
+gplanet_file = 'result_dirs/gplanet.summary.json'
 
 
 
@@ -15,6 +16,7 @@ math_data = pd.read_json(math_file)
 mmlu_data = pd.read_json(mmlu_file)
 zebra_data = pd.read_json(zebra_file)
 crux_data = pd.read_json(crux_file)
+gplanet_data = pd.read_json(gplanet_file)
 
 # only keep the models that have the same number of examples as the total_num_examples
 def filter_models_by_num_examples(cur_data, total_num_examples, total_key='Total'):
@@ -27,6 +29,7 @@ zebra_data = filter_models_by_num_examples(zebra_data, total_num_examples['zebra
 
 crux_data = filter_models_by_num_examples(crux_data, total_num_examples['crux'])
 math_data = filter_models_by_num_examples(math_data, total_num_examples['math-l5'])
+gplanet_data = filter_models_by_num_examples(gplanet_data, total_num_examples['gplanet'])
 
 # replace the value from "gemma-2-9b-it@nvidia" to "gemma-2-9b-it" for all data. only when the model name is "gemma-2-9b-it@nvidia"
 def replace_model_names(cur_data):
@@ -40,7 +43,7 @@ mmlu_data = replace_model_names(mmlu_data)
 zebra_data = replace_model_names(zebra_data)
 crux_data = replace_model_names(crux_data)
 math_data = replace_model_names(math_data)
-
+gplanet_data = replace_model_names(gplanet_data)
 
 # Add suffixes to the columns
 gsm_data = gsm_data[['Model', 'Acc']]
@@ -67,6 +70,9 @@ math_data = math_data[['Model', 'Acc']]
 math_data = math_data.add_suffix('_math')
 math_data = math_data.rename(columns={'Model_math': 'Model'}).rename(columns={'Acc_math': 'MATH<br/>-L5'})
 
+gplanet_data = gplanet_data[['Model', 'f1']]
+gplanet_data = gplanet_data.add_suffix('_gplanet')
+gplanet_data = gplanet_data.rename(columns={'Model_gplanet': 'Model'}).rename(columns={'f1_gplanet': 'GPLAN-ET'})
 
 # Generate the summary of the results (merging and only keep the models that have all results on MMLU, ZEBRA, CRUX, MATH)
 def generate_summary(): 
@@ -75,7 +81,7 @@ def generate_summary():
     merged_data = pd.merge(mmlu_data, zebra_data, on='Model')
     merged_data = pd.merge(merged_data, crux_data, on='Model')
     merged_data = pd.merge(merged_data, math_data, on='Model')
-
+    merged_data = pd.merge(merged_data, gplanet_data, on='Model')
 
     # add a final column to do average of the scores except for Model name 
     merged_data['Average'] = merged_data.drop(columns=['Model']).mean(axis=1)
@@ -107,6 +113,7 @@ def generate_full():
     merged_data = pd.merge(merged_data, zebra_data, on='Model', how='outer')
     merged_data = pd.merge(merged_data, crux_data, on='Model', how='outer')
     merged_data = pd.merge(merged_data, math_data, on='Model', how='outer')
+    merged_data = pd.merge(merged_data, gplanet_data, on='Model', how='outer')
  
 
     # sort by the average,  just for sorting purposes
