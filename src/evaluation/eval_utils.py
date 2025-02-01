@@ -7,7 +7,8 @@ total_num_examples = {
     'mmlu-redux': 2778,
     'zebra-grid': 1000,
     'crux': 800,
-    'math-l5': 721
+    'math-l5': 721,
+    'gplanet': 1396
 }
 
 

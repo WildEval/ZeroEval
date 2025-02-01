@@ -4,7 +4,7 @@ import json
 from templates.ZEBRA_GRID import ZEBRA_GRID
 from templates.MCQA import MCQA
 from templates.OEQA import OEQA, OEQA_DIRECT
-
+from templates.GPLANET import GPLANET
 
 def generate_choice_string(choices):
     choice_string = ""
@@ -42,6 +42,13 @@ def apply_lgp_grid_template(item):
     prompt_str = prompt_str.replace("{json_template}", json_str)
     return prompt_str
 
+def apply_gplanet_template(item):
+    prompt_str = GPLANET[:] 
+    actions = '\n'.join([f"{label} {action}" for label, action in zip(item['labels'], item['shuffle_actions'])])
+    prompt_str = prompt_str.replace("{actions}", actions)
+    prompt_str = prompt_str.replace("{objects_str}", item["objects_str"])
+    prompt_str = prompt_str.replace("{task}", item["task"])
+    return prompt_str
 
 if __name__ == "__main__":
     from datasets import load_dataset
@@ -99,6 +106,16 @@ if __name__ == "__main__":
             print("-"*100) 
             break
 
+    def gplanet_test():
+        dataset = load_dataset("WildEval/G-PlanET", split="test")
+        dataset = list(dataset)
+        # shuffule
+        random.shuffle(dataset)
+        for item in dataset:
+            print(apply_gplanet_template(item)) 
+            print(item)
+            print("-"*100) 
+            break
     # mcqa_test()
     # gsm_test()
     # crux_test()

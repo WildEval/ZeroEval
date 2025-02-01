@@ -1,0 +1,13 @@
+[
+  {
+    "Model": "Qwen2-7B-Instruct",
+    "Mode": "greedy",
+    "Total": 698,
+    "precision": "37.06",
+    "recall": "27.39",
+    "f1": "30.81",
+    "average rank similarity": "32.82",
+    "exact match": "3.30",
+    "plan relative": "21.26"
+  }
+]

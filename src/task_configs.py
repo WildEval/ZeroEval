@@ -1,5 +1,5 @@
 from datasets import load_dataset
-from _TEMPLATES import apply_mc_template, apply_lgp_grid_template, apply_oeqa_template
+from _TEMPLATES import apply_mc_template, apply_lgp_grid_template, apply_oeqa_template, apply_gplanet_template
 
 def mapping_task_names(data_name):
     """
@@ -23,6 +23,8 @@ def mapping_task_names(data_name):
     elif data_name == "wildbench_v2-hard":
         dataset = load_dataset("allenai/WildBench", "v2-hard", split="test")
         id_name = "session_id"
+    elif data_name == "gplanet":
+        dataset = load_dataset("WildEval/G-PlanET", split="test")
     else:
         raise ValueError(f"Data name {data_name} not supported")
     return dataset, id_name
@@ -50,6 +52,8 @@ def prompt_generation(data_name, data_item, args):
         if "no_cot" in args.run_name:
             prompt = apply_oeqa_template(data_item, cot=False)
         prompt = apply_oeqa_template(data_item)
+    elif data_name in ['gplanet']:
+        prompt = apply_gplanet_template(data_item)
     else:
         raise ValueError(f"Data name {data_name} not supported")
     return prompt
